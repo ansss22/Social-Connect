@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Création d'un compte{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row d-flex align-items-center justify-content-center ">
+        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+            <form id="userTypeForm"  class="mb-3">
+                <label for="user_type"  class="form-label">Vous êtes :</label>
+                <select id="user_type" name="user_type" class="form-select" onchange="toggleForm()">
+                    <option value="student">Étudiant</option>
+                    <option value="employee">Employé</option>
+                </select>
+            </form>
+            
+            <form action="/register/" method="post" id="studentForm">
+                {% csrf_token %}
+                {{ studentForm.as_p }}
+                <input type="hidden" name="user_type" value="student">
+                <button type="submit" class="btn btn-primary">Créer un compte Étudiant</button>
+            </form>
+            
+            <form action="/register/" method="post" id="employeeForm" style="display:none;">
+                {% csrf_token %}
+                {{ employeeForm.as_p }}
+                <input type="hidden" name="user_type" value="employee">
+                <button type="submit" class="btn btn-primary">Créer un compte Employé</button>
+            </form>
+            
+        </div>
+        <div class="col-md-8 col-lg-7 col-xl-6">
+            <img src="../static/Images/login-blue.png" alt="login" class="img-fluid">
+        </div>
+    </div>
+</div>
+
+<!-- Affichage des erreurs du formulaire -->
+{% if studentForm.errors %}
+<ul>
+    {% for field, error_list in studentForm.errors.items %}
+    <li>{{ field }}: {{ error_list }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+{% if employeeForm.errors %}
+<ul>
+    {% for field, error_list in employeeForm.errors.items %}
+    <li>{{ field }}: {{ error_list }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+<script>
+    function toggleForm() {
+        const userType = document.getElementById("user_type").value;
+        document.getElementById("studentForm").style.display = userType === "student" ? "block" : "none";
+        document.getElementById("employeeForm").style.display = userType === "employee" ? "block" : "none";
+    }
+</script>
+{% endblock %}

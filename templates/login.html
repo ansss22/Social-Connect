@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row d-flex align-items-center justify-content-center ">
+        <div class="col-md-7 col-lg-5 col-xl-5 offset-xl-1">
+            <form action="/login/" method="post">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="btn btn-primary">Se connecter</button>
+            </form>
+        </div>
+        <div class="col-md-8 col-lg-7 col-xl-6">
+            <img src="../static/Images/login-blue.png" alt="login" class="img-fluid">
+        </div>
+    </div>
+</div>
+{% endblock %}

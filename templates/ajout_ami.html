@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SocialConnect</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4267B2;
+            --secondary-color: #E8F0FE;
+            --accent-color: #1877F2;
+            --text-dark: #1C1E21;
+            --text-light: #606770;
+        }
+
+        body {
+            background-color: #F0F2F5;
+        }
+
+        .navbar {
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color) !important;
+        }
+
+        .profile-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .profile-image {
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .btn-custom {
+            background-color: transparent;
+            border: 2px solid white;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+            color : white;
+        }
+
+        .btn-custom:hover {
+            background-color: white;
+            color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 1.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .input-group {
+            background-color: white;
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .form-control {
+            border: none;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .messages-list .card {
+            transition: transform 0.2s ease;
+        }
+
+        .messages-list .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .friends-section {
+            background-color: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .list-group-item {
+            border: none;
+            border-radius: 10px !important;
+            margin-bottom: 0.5rem;
+            padding: 0.75rem 1rem;
+            background-color: var(--secondary-color);
+            transition: all 0.2s ease;
+        }
+
+        .list-group-item:hover {
+            background-color: var(--primary-color);
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .form-select {
+            border-radius: 20px;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .btn-logout {
+            background-color: #DC3545;
+            color: white;
+            border-radius: 20px;
+            padding: 0.5rem 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-logout:hover {
+            background-color: #C82333;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .profile-section {
+                text-align: center;
+            }
+            
+            .profile-section .text-end {
+                text-align: center !important;
+                margin-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="{% url 'welcome' %}">
+                <i class="fas fa-users me-2"></i>SocialConnect
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link btn-logout" href="{% url 'logout' %}">
+                            <i class="fas fa-sign-out-alt me-2"></i>Déconnexion
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="profile-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-2">
+                    <img src="../static/Images/blank-profile-picture.png" alt="Profile" class="img-fluid profile-image">
+                </div>
+                <div class="col-md-6">
+                    <h2 class="mb-0">{{ logged_user.name }} {{ logged_user.prenom }}</h2>
+                    <h2 class="mb-0">{{ statut_message }}</h2>                    
+                </div>                                
+                <div class="col-md-4 text-end">
+                    <a href="{% url 'profil' %}" class="btn btn-custom me-2">
+                        <i class="fas fa-user me-2"></i>Voir le profil
+                    </a>
+                    <a href="{% url 'modifier' %}" class="btn btn-custom">
+                        <i class="fas fa-edit me-2"></i>Modifier
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mt-5">
+        <div class="row">
+            <!-- Liste des amis -->
+            <div class="col-md-6">
+                <div class="friends-section">
+                    <h4>Amis</h4>
+                    <ul class="list-group">
+                        {% for ami in amis %}
+                            <li class="list-group-item">
+                                {{ ami.name }} {{ ami.prenom }}
+                            </li>
+                        {% empty %}
+                            <p>Aucun ami ajouté.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+    
+            <!-- Liste des personnes disponibles -->
+            <div class="col-md-6">
+                <div class="friends-section">
+                    <h4>Ajouter un ami</h4>
+                    <ul class="list-group">
+                        {% for personne in personnes %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                {{ personne.name }} {{ personne.prenom }}
+                                <form method="post" action="{% url 'ajouter' %}">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="ami_id" value="{{ personne.id }}">
+                                    <button type="submit" class="btn btn-primary btn-sm">Ajouter</button>
+                                </form>
+                            </li>
+                        {% empty %}
+                            <p>Aucune personne disponible.</p>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
