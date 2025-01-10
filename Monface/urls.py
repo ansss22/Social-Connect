@@ -12,5 +12,5 @@ urlpatterns = [
     path('profil/', views.profil, name='profil'),
     path('modifier/', views.modifier, name='modifier'),
     path('ajouter/', views.ajouter, name='ajouter'),
-    path('', views.index, name='index'),
+    path('/', views.index, name='index'),
 ]
