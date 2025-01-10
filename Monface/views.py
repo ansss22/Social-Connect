@@ -4,6 +4,11 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
 from Monface.models import Person, Student, Employee, Message
 
+def index(request):
+    return render(request ,'index.html')
+
+
+
 def login(request):
     if len(request.POST) > 0 :
         form=LoginForm(request.POST)
@@ -49,9 +54,6 @@ def register(request):
             "studentForm": studentForm,
             "employeeForm": employeeForm,
         })
-
-def index(request):
-    return render(request ,'index.html')
 
 def logout(request):
     auth_logout(request)  
