@@ -2,12 +2,12 @@ from django.shortcuts import render, redirect
 from Monface.forms import EmployeeProfilForm, LoginForm, StudentProfilForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
-from Monface.models import Person, Student, Employee, Message
+from Monface.models import Person, Student, Employee, Message, FriendRequest
+from django.shortcuts import render, redirect
+from .forms import StudentProfilForm, EmployeeProfilForm
 
 def index(request):
     return render(request ,'index.html')
-
-
 
 def login(request):
     if len(request.POST) > 0 :
@@ -22,9 +22,6 @@ def login(request):
     else : 
         loginform=LoginForm()
         return render(request,'login.html',{'form':loginform})
-
-from django.shortcuts import render, redirect
-from .forms import StudentProfilForm, EmployeeProfilForm
 
 def register(request):
     if request.method == "POST":
@@ -100,13 +97,15 @@ def welcome(request):
         amis = logged_user.Amis.all()
         messages = Message.objects.filter(auteur__in=list(amis) + [logged_user]).order_by("-date_publication")
 
+        received_requests = FriendRequest.objects.filter(to_user=logged_user)
+
 
         return render(request, 'welcome.html', {
             'logged_user': logged_user,
             'statut_message': statut_message,
             'messages': messages,
             'amis': amis,
-           
+            'received_requests': received_requests,
         })
     else:
         return redirect('/login')
@@ -233,3 +232,57 @@ def ajouter(request):
         'personnes': personnes,
         'statut_message': statut_message,  # Passer le statut
     })
+
+from django.http import JsonResponse
+
+def send_friend_request(request):
+    logged_user = get_logged_user_from_request(request)
+    if logged_user and request.method == "POST":
+        to_user_id = request.POST.get("to_user_id")
+        try:
+            to_user = Person.objects.get(id=to_user_id)
+            # Vérifiez si une demande d'ami existe déjà
+            if not FriendRequest.objects.filter(from_user=logged_user, to_user=to_user).exists():
+                FriendRequest.objects.create(from_user=logged_user, to_user=to_user)
+                return redirect('/welcome')  # Redirection après succès
+            else:
+                return JsonResponse({'error': 'Demande déjà envoyée.'})
+        except Person.DoesNotExist:
+            return JsonResponse({'error': 'Utilisateur non trouvé.'})
+    return redirect('/welcome')
+
+def accept_friend_request(request):
+    logged_user = get_logged_user_from_request(request)
+    if logged_user and request.method == "POST":
+        request_id = request.POST.get("request_id")
+        try:
+            friend_request = FriendRequest.objects.get(id=request_id, to_user=logged_user)
+            logged_user.Amis.add(friend_request.from_user)
+            friend_request.from_user.Amis.add(logged_user)
+            friend_request.delete()
+        except FriendRequest.DoesNotExist:
+            pass
+    return redirect('/welcome')
+
+def decline_friend_request(request):
+    logged_user = get_logged_user_from_request(request)
+    if logged_user and request.method == "POST":
+        request_id = request.POST.get("request_id")
+        try:
+            friend_request = FriendRequest.objects.get(id=request_id, to_user=logged_user)
+            friend_request.delete()
+        except FriendRequest.DoesNotExist:
+            pass
+    return redirect('/welcome')
+
+def remove_friend(request):
+    logged_user = get_logged_user_from_request(request)
+    if logged_user and request.method == "POST":
+        friend_id = request.POST.get("friend_id")
+        try:
+            friend = logged_user.Amis.get(id=friend_id)
+            logged_user.Amis.remove(friend)
+            friend.Amis.remove(logged_user)
+        except Person.DoesNotExist:
+            pass
+    return redirect('/welcome')

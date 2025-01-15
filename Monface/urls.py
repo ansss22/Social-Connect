@@ -15,6 +15,10 @@ urlpatterns = [
     path('profil/', views.profil, name='profil'),
     path('modifier/', views.modifier, name='modifier'),
     path('ajouter/', views.ajouter, name='ajouter'),
+    path('send_friend_request/', views.send_friend_request, name='send_friend_request'),
+    path('accept_friend_request/', views.accept_friend_request, name='accept_friend_request'),
+    path('decline_friend_request/', views.decline_friend_request, name='decline_friend_request'),
+    path('remove_friend/', views.remove_friend, name='remove_friend'),
 ]
 
 if settings.DEBUG:
